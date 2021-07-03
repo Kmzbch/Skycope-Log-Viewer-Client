@@ -30,6 +30,8 @@ export class LoginComponent implements OnInit {
   }
 
   getLoginForm() {
+    console.log('getLoginForm() invoked');
+
     this.loginForm = this.formBuilder.group({
       userName: ['', Validators.required],
       password: ['', Validators.required]
@@ -37,6 +39,8 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
+    console.log('login() invoked');
+
     this.authService.Login(
       this.formControls.userName.value,
       this.formControls.password.value

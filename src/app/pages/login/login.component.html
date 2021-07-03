@@ -1,9 +1,20 @@
 <div class="container">
-    <form [formGroup]="loginForm">
-        <label>Username</label> <input formControlName="userName" type="text" placeholder="Username">
-        <p *ngIf="formControls.userName.invalid">Please enter username.</p>
-        <label>Password</label> <input formControlName="password" type="password" placeholder="Password">
-        <p *ngIf="formControls.password.invalid">Please enter password.</p>
+    <form [formGroup]="loginForm" class="col-md-auto form" novalidate>
+        <div class="col-md-3 mb-3">
+            <label for="userName">Username</label>
+            <input type="text" class="form-control" formControlName="userName" placeholder="Username">
+            <div *ngIf="formControls.userName.invalid && (formControls.userName.dirty || formControls.userName.touched)">
+                <div class="text-danger">Please enter username.</div>
+                
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <label for="password">Password</label>
+            <input type="password" class="form-control" formControlName="password" placeholder="Password">
+            <div *ngIf="formControls.password.invalid && (formControls.password.dirty || formControls.password.touched)">
+                <div class="text-danger">Please enter password.</div>
+            </div>
+        </div>
     </form>
-    <button class="btn-login" (click)="login()">Log in</button>
+    <button type="submit" class="btn btn-primary" (click)="login()">Log in</button>
 </div>
