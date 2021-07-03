@@ -1,1 +1,50 @@
-<p>home works!</p>
+<div class="container col-md-3 mb-3">
+  <h2>Login</h2>
+
+  
+  <div class="row">
+    <div class="dropdown">
+      <button
+        class="btn btn-secondary dropdown-toggle"
+        type="button"
+        id="dropdownMenuButton1"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Dropdown button
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <li><a class="dropdown-item" href="#">Action</a></li>
+        <li><a class="dropdown-item" href="#">Another action</a></li>
+        <li><a class="dropdown-item" href="#">Something else here</a></li>
+      </ul>
+    </div>
+    <div class="col-md-3 mb-3">
+      <input
+        type="text"
+        class="form-control"
+        id="filter"
+        placeholder="Filter by keyword"
+      />
+    </div>
+    <div class="col-md-3 mb-3">
+      <input
+        type="text"
+        class="form-control"
+        id="highlighter"
+        placeholder="Highlight the keyword"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1">Example textarea</label>
+      <textarea
+        class="form-control"
+        id="exampleFormControlTextarea1"
+        rows="3"
+      ></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary" (click)="logout()">Log out</button>
+
+  </div>
+</div>
