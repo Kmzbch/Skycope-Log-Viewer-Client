@@ -1,20 +1,26 @@
 <div class="container">
-    <form [formGroup]="loginForm" class="col-md-auto form" novalidate>
+    <h2>Login</h2>
+    <form [formGroup]="loginForm" class="col-md-auto form" (ngSubmit)="onSubmit()" novalidate>
         <div class="col-md-3 mb-3">
-            <label for="userName">Username</label>
-            <input type="text" class="form-control" formControlName="userName" placeholder="Username">
-            <div *ngIf="formControls.userName.invalid && (formControls.userName.dirty || formControls.userName.touched)">
-                <div class="text-danger">Please enter username.</div>
+            <label for="username">Username</label>
+            <input type="text" class="form-control" 
+            [ngClass]="{ 'is-invalid': submitted && formControls.username.errors }" 
+            formControlName="username" placeholder="Username">
+            <div *ngIf="formControls.username.invalid && (formControls.username.touched || formControls.username.dirty)">
+                <div class="text-danger" *ngIf="formControls.username.errors?.required">Please enter username.</div>
                 
             </div>
         </div>
+
         <div class="col-md-3 mb-3">
             <label for="password">Password</label>
-            <input type="password" class="form-control" formControlName="password" placeholder="Password">
-            <div *ngIf="formControls.password.invalid && (formControls.password.dirty || formControls.password.touched)">
-                <div class="text-danger">Please enter password.</div>
+            <input type="password" class="form-control" 
+            [ngClass]="{ 'is-invalid': submitted && formControls.password.errors }" 
+            formControlName="password" placeholder="Password">
+            <div *ngIf="formControls.password.invalid && (formControls.password.touched || formControls.password.dirty)">
+                <div class="text-danger" *ngIf="formControls.password.errors?.required">Please enter password.</div>
             </div>
         </div>
+        <button type="submit" class="btn btn-primary">Log in</button>
     </form>
-    <button type="submit" class="btn btn-primary" (click)="login()">Log in</button>
 </div>
