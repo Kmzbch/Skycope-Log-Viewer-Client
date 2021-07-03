@@ -1,0 +1,9 @@
+<div class="container">
+    <form [formGroup]="loginForm">
+        <label>Username</label> <input formControlName="userName" type="text" placeholder="Username">
+        <p *ngIf="formControls.userName.invalid">Please enter username.</p>
+        <label>Password</label> <input formControlName="password" type="password" placeholder="Password">
+        <p *ngIf="formControls.password.invalid">Please enter password.</p>
+    </form>
+    <button class="btn-login" (click)="login()">Log in</button>
+</div>
