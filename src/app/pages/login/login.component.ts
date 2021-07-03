@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
     loading = false;
     submitted = false;
     returnUrl: string = '';
+    showErrorMessage: Boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -68,7 +69,10 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit() {
+      
         this.submitted = true;
+        this.showErrorMessage = false;
+
 
         if (this.loginForm.invalid) {
             return;
@@ -83,11 +87,13 @@ export class LoginComponent implements OnInit {
             .subscribe(
                 (data) => {
                     this.router.navigate([
-                        this.returnUrl
+                        // this.returnUrl
+                        'home'
                     ]);
                 },
                 (error) => {
                     this.loading = false;
+                    this.showErrorMessage = true;
                 }
             );
     }

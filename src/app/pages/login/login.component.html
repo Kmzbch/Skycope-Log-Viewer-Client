@@ -21,6 +21,9 @@
                 <div class="text-danger" *ngIf="formControls.password.errors?.required">Please enter password.</div>
             </div>
         </div>
+        <div class="mb-3">
+            <div *ngIf="showErrorMessage" class="text-danger" >Invalid username and password Please try again.</div>
+        </div>
         <button type="submit" class="btn btn-primary">Log in</button>
     </form>
 </div>

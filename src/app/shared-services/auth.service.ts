@@ -14,7 +14,7 @@ export class AuthService {
 
     constructor(public router: Router, private http: HttpClient) {
         this.currentUserSubject = new BehaviorSubject<User | null>(
-            JSON.parse(localStorage.getItem('currentUser') || '{}')
+            JSON.parse(localStorage['currentUser'] || null) || {}
         );
         this.currentUser = this.currentUserSubject.asObservable();
     }
@@ -27,6 +27,7 @@ export class AuthService {
         console.log('Login invoked!');
         return this.http.post<any>(`/users/authenticate`, { username, password }).pipe(
             map((user) => {
+
                 // login successful if there's a jwt token in the response
                 if (user && user.token) {
                     // store user details and jwt token in local storage to keep user logged in between page refreshes
