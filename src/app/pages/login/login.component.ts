@@ -23,16 +23,15 @@ export class LoginComponent implements OnInit {
             Validators.required
         ]
     });
-    loading = false;
-    submitted = false;
+    submitted:Boolean = false;
     returnUrl: string = '';
     showErrorMessage: Boolean = false;
 
     constructor(
         private formBuilder: FormBuilder,
         public router: Router,
-        public authService: AuthService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        public authService: AuthService
     ) {
         if (this.authService.currentUserValue) {
             this.router.navigate([
@@ -44,8 +43,7 @@ export class LoginComponent implements OnInit {
     ngOnInit() {
         this.getLoginForm();
 
-        // get return url from route parameters or default to '/'
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
     getLoginForm() {
@@ -69,18 +67,13 @@ export class LoginComponent implements OnInit {
     }
 
     onSubmit() {
-      
-        this.submitted = true;
-        this.showErrorMessage = false;
-
 
         if (this.loginForm.invalid) {
             return;
         }
 
-        console.log("login form is valid");
+        this.showErrorMessage = false;
 
-        this.loading = true;
         this.authService
             .login(this.formControls.username.value, this.formControls.password.value)
             .pipe(first())
@@ -92,10 +85,8 @@ export class LoginComponent implements OnInit {
                     ]);
                 },
                 (error) => {
-                    this.loading = false;
                     this.showErrorMessage = true;
                 }
             );
     }
-
 }

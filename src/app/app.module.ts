@@ -2,13 +2,15 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
+import { AuthService } from './shared-services/auth.service';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from './shared-services/auth.service';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+
 import { fakeBackendProvider } from './helpers/fake-backend';
 
 @NgModule({
@@ -27,7 +29,6 @@ import { fakeBackendProvider } from './helpers/fake-backend';
   ],
   providers: [
     AuthService,
-    // provider used to create fake backend
     fakeBackendProvider
   ],
   bootstrap: [AppComponent]
