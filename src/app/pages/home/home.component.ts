@@ -45,8 +45,9 @@ export class HomeComponent implements OnInit {
     }
 
     public textareaContent: string = '';
+    public originalContent: string = '';
 
-    onChange() {
+    getSelectedServiceLog() {
         console.log(this.formControls.serviceOptions.value);
         const serviceId = this.formControls.serviceOptions.value;
 
@@ -55,6 +56,18 @@ export class HomeComponent implements OnInit {
         console.log(log);
 
         this.textareaContent = log;
+    }
+
+    filterLog() {
+        const query = this.formControls.inputFilter.value.toLowerCase();
+        if(query){
+            let lines = this.originalContent.split('\n');
+            let filetered = lines.filter(l => l.toLowerCase().includes(query));
+            
+            this.textareaContent = filetered.join('\n');
+        } else {
+            this.getSelectedServiceLog();
+        }
     }
 
     logout() {
@@ -83,6 +96,8 @@ export class HomeComponent implements OnInit {
         else if (url === '2') {
             returnValue = 'BBBB;';
         }
+
+        this.originalContent = returnValue;
 
         return returnValue;
     }

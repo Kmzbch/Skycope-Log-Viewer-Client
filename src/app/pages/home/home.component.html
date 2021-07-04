@@ -10,7 +10,7 @@
           <div class="col-md-4 mb-3">
             <select
               formControlName="serviceOptions"
-              (change)="onChange()"
+              (change)="getSelectedServiceLog()"
               class="form-select form-select-md mb-3"
               aria-label="Default select example"
             >
@@ -22,6 +22,7 @@
           <div class="col-md-4 mb-3">
             <input
               formControlName="inputFilter"
+              (keyup)="filterLog()"
               type="text"
               class="form-control"
               id="filter"
@@ -46,8 +47,9 @@
       <textarea
         [(ngModel)]="textareaContent"
         class="form-control"
+        readonly
         id="exampleFormControlTextarea1"
-        rows="10"
+        rows="15"
       ></textarea>
     </div>
   </div>
