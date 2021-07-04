@@ -14,7 +14,7 @@
               class="form-select form-select-md mb-3"
               aria-label="Default select example"
             >
-              <option *ngFor="let service of services" [ngValue]="service.id">
+              <option *ngFor="let service of serviceOptions" [ngValue]="service.id">
                 {{ service.name }}
               </option>
             </select>
@@ -44,6 +44,11 @@
   </form>
   <div class="row justify-content-center">
     <div class="col-md-9 mb-4">
+      <div class="backdrop">
+        <div class="highlights">
+          <!-- cloned text with <mark> tags here -->
+        </div>
+      </div>
       <textarea
         [(ngModel)]="textareaContent"
         class="form-control"

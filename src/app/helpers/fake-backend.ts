@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpRequest, HttpResponse, HttpHandler, HttpEvent, HttpInterceptor, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
-import { User} from '../models/user';
+import { UserModel} from '../models/UserModel';
 
 // array in local storage for registered users
 let users = JSON.parse(localStorage['users'] || null) || [
@@ -50,7 +50,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         function authenticate() {
             const { username, password } = body;
-            const user = users.find((x : User) => x.username === username && x.password === password);
+            const user = users.find((x : UserModel) => x.username === username && x.password === password);
             if (!user) return error('Username or password is incorrect');
 
             // 
@@ -73,7 +73,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
 
         // helper functions
 
-        function ok(body? : User) {
+        function ok(body? : UserModel) {
             return of(new HttpResponse({ status: 200, body }))
         }
 

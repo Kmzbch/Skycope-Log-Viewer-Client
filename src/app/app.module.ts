@@ -12,6 +12,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { HomeComponent } from './pages/home/home.component';
 
 import { fakeBackendProvider } from './helpers/fake-backend';
+import { ServiceService } from './shared-services/service.service';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { fakeBackendProvider } from './helpers/fake-backend';
   ],
   providers: [
     AuthService,
+    ServiceService,
     fakeBackendProvider
   ],
   bootstrap: [AppComponent]

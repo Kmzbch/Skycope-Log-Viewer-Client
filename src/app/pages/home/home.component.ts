@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from 'src/app/shared-services/auth.service';
-
 import { interval, Observable } from 'rxjs';
-import { take } from 'rxjs/operators';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { serviceModel } from 'src/app/models/serviceModel';
+import { ServiceModel } from 'src/app/models/ServiceModel';
+import { ServiceService } from 'src/app/shared-services/service.service';
+import { AuthService } from 'src/app/shared-services/auth.service';
 
 @Component({
     selector: 'app-home',
@@ -15,27 +14,32 @@ import { serviceModel } from 'src/app/models/serviceModel';
     ]
 })
 export class HomeComponent implements OnInit {
-    // public interval: Observable<number> = new Observable<number>();
+    public serviceOptions: ServiceModel[] = [];
+    public textareaContent: string = '';
+    // private interval: Observable<number> = new Observable<number>();
+    private logContent: string = '';
+    private isFiltered: Boolean = false;
+    private isHighlighted: Boolean = false;
 
-    public services: serviceModel[] = [];
-
-    constructor(private router: Router, private formBuilder: FormBuilder, private authService: AuthService) {
-        // // initialize rxjs interval
-        // const takeHundredNumber = interval(1000).pipe(take(100));
-        // // takeHundredNumber.subscribe(x => console.log('Next: ', x));
-        // takeHundredNumber.subscribe(x => {
-        //     console.log('Next: ', x);
-        //     // console.log(Math.floor(Math.random() * 2 + 1));
-        // });
+    constructor(
+        private router: Router,
+        private formBuilder: FormBuilder,
+        private authService: AuthService,
+        private serviceService: ServiceService
+    ) {
     }
 
+    // life cycle hooks
     ngOnInit(): void {
-        // TODO: api call to get services associated with the user
-        this.services = this.getServices();
+        this.serviceOptions = this.serviceService.getServices();
+
+        // const logContentInterval = interval(1000).pipe();
+        // logContentInterval.subscribe(this.updateLogContent.bind(this));
     }
 
+    // form
     public logViewerForm: FormGroup = this.formBuilder.group({
-        serviceOptions: this.services,
+        serviceOptions: this.serviceOptions,
         inputFilter: '',
         inputHighlight: ''
     });
@@ -44,83 +48,51 @@ export class HomeComponent implements OnInit {
         return this.logViewerForm.controls;
     }
 
-    public textareaContent: string = '';
-    public originalContent: string = '';
+    filterLog() {
+        const filterBy = this.formControls.inputFilter.value.toLowerCase();
+        this.isFiltered = filterBy;
 
-    getSelectedServiceLog() {
-        console.log(this.formControls.serviceOptions.value);
-        const serviceId = this.formControls.serviceOptions.value;
+        if (this.isFiltered) {
+            const lines = this.logContent.split('\n');
+            // let filetered = lines.filter((line) => line.toLowerCase().includes(filterBy));
+            let filetered = lines.filter(
+                (line) => line.toLowerCase().indexOf(filterBy) !== -1);
+            this.textareaContent = filetered.join('\n');
+        }
+        else {
+            this.getSelectedServiceLog();
+        }
 
-        // api call
-        let log = this.getServiceLog(this.services[serviceId - 1].apiUrl);
-        console.log(log);
-
-        this.textareaContent = log;
     }
 
-    filterLog() {
-        const query = this.formControls.inputFilter.value.toLowerCase();
-        if(query){
-            let lines = this.originalContent.split('\n');
-            let filetered = lines.filter(l => l.toLowerCase().includes(query));
-            
-            this.textareaContent = filetered.join('\n');
-        } else {
-            this.getSelectedServiceLog();
+    highlightLog() {
+        const query = this.formControls.inputHighlight.value.toLowerCase();
+        this.isHighlighted = query;
+        //
+    }
+
+    getSelectedServiceLog() {
+        const serviceId = this.formControls.serviceOptions.value;
+        const content = this.serviceService.getServiceLog(this.serviceOptions[serviceId - 1].apiUrl);
+
+        // set text content
+        this.logContent = content;
+        this.textareaContent = content;
+    }
+
+    // utility
+    updateLogContent() {
+        if(!this.isFiltered && this.formControls.serviceOptions.value) {
+            this.logContent += "TEST!\n" // simulate
+            this.textareaContent = this.logContent;
         }
     }
 
+    // logout
     logout() {
         this.authService.logout();
         this.router.navigate([
             '/login'
         ]);
-    }
-
-    getServiceLog(url: string): any {
-        let returnValue = '';
-
-        console.log(url);
-        if (url === '1') {
-            returnValue =
-                '' +
-                '2021-07-04 13:13:50,483 - INFO - This is a sample info log and generated by .service1.py for the purpose of simulating a service.\n' +
-                '2021-07-04 13:13:50,484 - INFO - You may use a KEYWORD to filter a line!\n' +
-                '2021-07-04 13:13:50,485 - INFO - You may use a KEYWORD to be highlighted in a line!\n' +
-                '2021-07-04 13:13:51,070 - INFO - This is a sample info log and generated by .service1.py for the purpose of simulating a service.\n' +
-                '2021-07-04 13:13:51,071 - INFO - You may use a KEYWORD to filter a line!\n' +
-                '2021-07-04 13:13:51,072 - INFO - You may use a KEYWORD to be highlighted in a line!\n' +
-                '2021-07-04 13:13:52,048 - INFO - This is a sample info log and generated by .service1.py for the purpose of simulating a service.\n' +
-                '2021-07-04 13:13:52,049 - INFO - You may use a KEYWORD to filter a line!\n';
-        }
-        else if (url === '2') {
-            returnValue = 'BBBB;';
-        }
-
-        this.originalContent = returnValue;
-
-        return returnValue;
-    }
-
-    // get services at random for testing
-    getServices(): serviceModel[] {
-        // const randomNum = Math.floor(Math.random() * 2 + 1);
-        let randomNum = 1;
-        let returnValue;
-
-        if (randomNum === 2) {
-            returnValue = [
-                { id: 3, name: 'Service 3', apiUrl: '3' },
-                { id: 4, name: 'Service 4', apiUrl: '4' }
-            ];
-        }
-        else {
-            returnValue = [
-                { id: 1, name: 'Service 1', apiUrl: '1' },
-                { id: 2, name: 'Service 2', apiUrl: '2' }
-            ];
-        }
-
-        return returnValue;
     }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { User } from './models/user';
+import { UserModel } from './models/UserModel';
 import { AuthService } from './shared-services/auth.service';
 @Component({
   selector: 'app-root',
@@ -8,7 +8,7 @@ import { AuthService } from './shared-services/auth.service';
 })
 export class AppComponent {
   title = 'SkycopeLogViewerClient';
-  currentUser: User | null = new User();
+  currentUser: UserModel | null = new UserModel();
 
   constructor(
       private authService: AuthService
