@@ -1,17 +1,27 @@
 <div class="container col-md-3 mb-3">
   <h2>Login</h2>
 
-  <!-- TODO: contain Popper.js -->
   <div class="row">
-    <div class="dropdown show">
-      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    <div class="dropdown col-md-3 mb-3">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Dropdown button
       </button>
-      <div class="dropdown-menu show" aria-labelledby="dropdownMenuButton">
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
         <a class="dropdown-item" href="#">Service 1</a>
         <a class="dropdown-item" href="#">Service 2</a>
       </div>
     </div>
+
+    <!-- <div class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#">Action</a>
+        <a class="dropdown-item" href="#">Another action</a>
+        <a class="dropdown-item" href="#">Something else here</a>
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="#">Separated link</a>
+      </div>
+    </div> -->
 
     <div class="col-md-3 mb-3">
       <input
@@ -30,6 +40,9 @@
       />
     </div>
 
+
+  </div>
+  <div class="row">
     <div class="mb-3">
       <label for="exampleFormControlTextarea1">Example textarea</label>
       <textarea
@@ -38,7 +51,10 @@
         rows="3"
       ></textarea>
     </div>
-    <button type="submit" class="btn btn-primary" (click)="logout()">Log out</button>
-
+  </div>
+  <div class="row">
+    <div class="col-md-3">
+      <button type="submit" class="btn btn-primary" (click)="logout()">Log out</button>
+    </div>
   </div>
 </div>

@@ -66,6 +66,10 @@ export class LoginComponent implements OnInit {
         return this.loginForm.controls;
     }
 
+    resetErrorMessage() {
+        this.showErrorMessage = false;
+    }
+
     onSubmit() {
 
         if (this.loginForm.invalid) {

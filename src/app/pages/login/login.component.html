@@ -19,6 +19,7 @@
           [ngClass]="{
             'is-invalid': submitted && formControls.username.errors
           }"
+          (input)="resetErrorMessage()"
           formControlName="username"
           placeholder="Username"
         />
@@ -44,11 +45,13 @@
       </div>
       <div class="col-md-3 mb-3">
         <input
+        
           type="password"
           class="form-control"
           [ngClass]="{
             'is-invalid': submitted && formControls.password.errors
           }"
+          (input)="resetErrorMessage()"
           formControlName="password"
           placeholder="Password"
         />
@@ -70,7 +73,7 @@
 
     <div class="row justify-content-center">
       <div class="col-md-5 mb-3">
-        <div *ngIf="showErrorMessage" class="text-danger">
+        <div *ngIf="showErrorMessage" class="text-danger text-center">
           Invalid username and password Please try again.
         </div>
       </div>
