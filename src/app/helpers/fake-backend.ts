@@ -38,12 +38,8 @@ export class FakeBackendInterceptor implements HttpInterceptor {
             switch (true) {
                 case url.endsWith('/users/authenticate') && method === 'POST':
                     return authenticate();
-                case url.endsWith('/users/register') && method === 'POST':
-                    return register();
                 case url.endsWith('/users') && method === 'GET':
                     return getUsers();
-                case url.match(/\/users\/\d+$/) && method === 'DELETE':
-                    return deleteUser();
                 default:
                     // pass through any requests not handled above
                     return next.handle(request);
@@ -66,35 +62,13 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 username: user.username,
                 password: user.password,
                 admin: user.admin,
-                token: 'fake-jwt-token'
+                token: user.admin
             })
-        }
-
-        function register() {
-            const user = body
-
-            if (users.find((x:User) => x.username === user.username)) {
-                return error('Username "' + user.username + '" is already taken')
-            }
-
-            user.id = users.length ? Math.max(...users.map((x:User) => x.id)) + 1 : 1;
-            users.push(user);
-            localStorage.setItem('users', JSON.stringify(users));
-
-            return ok();
         }
 
         function getUsers() {
             if (!isLoggedIn()) return unauthorized();
             return ok(users);
-        }
-
-        function deleteUser() {
-            if (!isLoggedIn()) return unauthorized();
-
-            users = users.filter((x:User) => x.id !== idFromUrl());
-            localStorage.setItem('users', JSON.stringify(users));
-            return ok();
         }
 
         // helper functions
