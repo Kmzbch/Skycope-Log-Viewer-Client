@@ -62,7 +62,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 username: user.username,
                 password: user.password,
                 admin: user.admin,
-                token: user.admin
+                token: user.token
             })
         }
 
