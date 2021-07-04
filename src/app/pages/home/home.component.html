@@ -3,56 +3,68 @@
     <h3 class="col-md-auto mb-5">Skycope Log Viewer</h3>
   </div>
 
-  <div class="row justify-content-center">
-    <div class="col-md-9 mb-2">
-      <div class="row">
-        <div class="col-md-4 mb-3">
-          <select class="form-select form-select-md mb-3" aria-label="Default select example">
-            <option selected value="1">Service 1</option>
-            <option value="2">Service 2</option>
-          </select>
+  <form [formGroup]="logViewerForm">
+    <div class="row justify-content-center">
+      <div class="col-md-9 mb-2">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <select
+              formControlName="serviceOptions"
+              (change)="onChange()"
+              class="form-select form-select-md mb-3"
+              aria-label="Default select example"
+            >
+              <option *ngFor="let service of services" [ngValue]="service.id">
+                {{ service.name }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-4 mb-3">
+            <input
+              formControlName="inputFilter"
+              type="text"
+              class="form-control"
+              id="filter"
+              placeholder="Filter by keyword"
+            />
+          </div>
+          <div class="col-md-4 mb-3">
+            <input
+              formControlName="inputHighlight"
+              type="text"
+              class="form-control"
+              id="highlighter"
+              placeholder="Highlight the keyword"
+            />
+          </div>
         </div>
-        <div class="col-md-4 mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="filter"
-            placeholder="Filter by keyword"
-          />
-        </div>
-        <div class="col-md-4 mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="highlighter"
-            placeholder="Highlight the keyword"
-          />
-        </div>
-    
       </div>
     </div>
-
-
-
-  </div>
+  </form>
   <div class="row justify-content-center">
     <div class="col-md-9 mb-4">
       <textarea
+        [(ngModel)]="textareaContent"
         class="form-control"
         id="exampleFormControlTextarea1"
         rows="10"
       ></textarea>
     </div>
   </div>
+
   <div class="row justify-content-center">
     <div class="col-md-9 mb-3">
       <div class="row justify-content-end">
         <div class="col-md-auto">
-          <button type="submit" class="btn btn-primary btn-md" (click)="logout()">Log out</button>
-        </div>  
-      </div>  
-
+          <button
+            type="submit"
+            class="btn btn-primary btn-md"
+            (click)="logout()"
+          >
+            Log out
+          </button>
+        </div>
+      </div>
     </div>
-
   </div>
 </div>
