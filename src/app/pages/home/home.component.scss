@@ -12,3 +12,7 @@ html{
     right: 0;
     margin: auto;
   }
+
+  ::ng-deep .highlight {
+    background-color: yellow;
+  }

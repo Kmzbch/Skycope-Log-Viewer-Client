@@ -1,0 +1,30 @@
+// star-rating.component.scss
+ul.star-rating {
+    list-style: none;
+    color: black;
+    padding: 0;
+    margin: 0;
+
+    &:not(.is-disabled):hover {
+      color: rgb(42, 190, 235);
+
+      & li:hover ~ li {
+        color: black;
+      }
+    }
+
+    li {
+      font-size: 3em;
+      transition-duration: 300ms;
+      cursor: pointer;
+      display: inline;
+    }
+
+    .star-rating--highlight {
+        color: orange;
+    }
+}
+
+ul.star-rating.is-disabled {
+    opacity: 50%;
+}

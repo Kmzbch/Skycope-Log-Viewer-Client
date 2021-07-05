@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { interval, Observable } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
@@ -15,15 +15,15 @@ import { AuthService } from 'src/app/shared-services/auth.service';
 })
 export class HomeComponent implements OnInit {
     public serviceOptions: ServiceModel[] = [];
-    public textareaContent: string = '';
-    // private interval: Observable<number> = new Observable<number>();
     private logContent: string = '';
     private isFiltered: Boolean = false;
-    private isHighlighted: Boolean = false;
+
+    private logViewConsole: any;
 
     constructor(
         private router: Router,
         private formBuilder: FormBuilder,
+        private renderer: Renderer2,
         private authService: AuthService,
         private serviceService: ServiceService
     ) {
@@ -31,10 +31,13 @@ export class HomeComponent implements OnInit {
 
     // life cycle hooks
     ngOnInit(): void {
+        
         this.serviceOptions = this.serviceService.getServices();
 
         // const logContentInterval = interval(1000).pipe();
         // logContentInterval.subscribe(this.updateLogContent.bind(this));
+
+        this.logViewConsole = document.querySelector("#logview-console .console-textarea");
     }
 
     // form
@@ -54,10 +57,24 @@ export class HomeComponent implements OnInit {
 
         if (this.isFiltered) {
             const lines = this.logContent.split('\n');
-            // let filetered = lines.filter((line) => line.toLowerCase().includes(filterBy));
-            let filetered = lines.filter(
-                (line) => line.toLowerCase().indexOf(filterBy) !== -1);
-            this.textareaContent = filetered.join('\n');
+
+            Array.from(this.logViewConsole.children).forEach((item : any) => {
+                if(!item.getAttribute('textarea')) {
+                    const querystring = filterBy.trim()
+                    const re = new RegExp(`(${ querystring })`, 'ig');
+                    const found = item.textContent.match(re);
+
+                    if(found) {
+                        if (item.classList.contains('hidden') ) {
+                            item.classList.remove('hidden');
+                        }
+                    } else {
+                        if (!item.classList.contains('hidden') ) {
+                            item.classList.add('hidden');
+                        }
+                    }
+                }
+            }, '');
         }
         else {
             this.getSelectedServiceLog();
@@ -65,10 +82,25 @@ export class HomeComponent implements OnInit {
 
     }
 
+    @ViewChild('refEl', { static:true }) refEl : any;
+    receipt = "hello"
+
     highlightLog() {
         const query = this.formControls.inputHighlight.value.toLowerCase();
-        this.isHighlighted = query;
-        //
+
+        // let lines = this.textareaContent.split('\n');
+        let lines = this.logContent.split('\n');
+
+        this.logViewConsole.innerHTML = ""
+        for(let line of lines) {
+            let replaced = line.replace(/\n/gi, '<br>');
+            const querystring = this.formControls.inputHighlight.value.trim().split(' ')
+            const re = new RegExp(`(${ querystring.join('|') })`, 'gi');
+            replaced = replaced.replace(re, `<span class="highlight">$1</span>`);
+    
+            this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
+        }
+
     }
 
     getSelectedServiceLog() {
@@ -77,14 +109,24 @@ export class HomeComponent implements OnInit {
 
         // set text content
         this.logContent = content;
-        this.textareaContent = content;
+
+        let lines = content.split('\n');
+
+        this.logViewConsole.innerHTML = ""
+        for(let line of lines) {
+            let replaced = line.replace(/\n/gi, '<br>');
+
+            this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
+        }
+
     }
 
     // utility
     updateLogContent() {
         if(!this.isFiltered && this.formControls.serviceOptions.value) {
+            this.logViewConsole.insertAdjacentHTML("beforeend", "<div>TEST!</div>");
             this.logContent += "TEST!\n" // simulate
-            this.textareaContent = this.logContent;
+            this.logViewConsole.innerHTML = this.logContent.replace(/\n/gi, '<br>');
         }
     }
 

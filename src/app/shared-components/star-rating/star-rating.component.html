@@ -1,0 +1,11 @@
+<!-- star-rating.component.html -->
+
+<ul class="star-rating">
+    <li
+      *ngFor="let i of toIterableArray(numberOfStar)"
+      (click)="setRating(i + 1)"
+      [ngClass]="{ 'star-rating--highlight': currentRating > i }"
+    >
+      ☆
+    </li>
+  </ul>

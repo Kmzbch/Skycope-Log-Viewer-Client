@@ -32,6 +32,7 @@
           <div class="col-md-4 mb-3">
             <input
               formControlName="inputHighlight"
+              (keyup)="highlightLog()"
               type="text"
               class="form-control"
               id="highlighter"
@@ -42,13 +43,8 @@
       </div>
     </div>
   </form>
-  <div class="row justify-content-center">
+  <!-- <div class="row justify-content-center">
     <div class="col-md-9 mb-4">
-      <div class="backdrop">
-        <div class="highlights">
-          <!-- cloned text with <mark> tags here -->
-        </div>
-      </div>
       <textarea
         [(ngModel)]="textareaContent"
         class="form-control"
@@ -56,6 +52,19 @@
         id="exampleFormControlTextarea1"
         rows="15"
       ></textarea>
+    </div>
+  </div> -->
+
+  <!-- <div>
+    <pre #refEl> {{receipt}} </pre>
+    <br>
+  </div> -->
+
+  <div class="row justify-content-center">
+    <div class="col-md-9 mb-4">
+      <textarea-expanded
+      id="logview-console"
+      ></textarea-expanded>
     </div>
   </div>
 

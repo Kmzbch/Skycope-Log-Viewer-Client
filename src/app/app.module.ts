@@ -13,12 +13,16 @@ import { HomeComponent } from './pages/home/home.component';
 
 import { fakeBackendProvider } from './helpers/fake-backend';
 import { ServiceService } from './shared-services/service.service';
+import { TextareaExpandedComponent } from './shared-components/textarea-expanded/textarea-expanded.component';
+import { StarRatingComponent } from './shared-components/star-rating/star-rating.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginComponent,
-    HomeComponent
+    HomeComponent,
+    TextareaExpandedComponent,
+    StarRatingComponent
   ],
   imports: [
     BrowserModule,
