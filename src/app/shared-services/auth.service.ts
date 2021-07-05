@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { UserModel } from '../models/UserModel';
 
 @Injectable({
@@ -24,20 +24,21 @@ export class AuthService {
     }
 
     login(username: string, password: string) {
-        return this.http.post<any>(`/users/authenticate`, { username, password }).pipe(
-            map((user) => {
-                if (user && user.token) {
-                    // store user details and jwt token in local storage to keep user logged in between page refreshes
-                    localStorage.setItem('currentUser', JSON.stringify(user));
-                    this.currentUserSubject.next(user);
+        return this.http.post<any>('/api/login', { username, password }).pipe(
+            map((res) => {
+                // if (res.user && res.user.token) {
+                if (res.user) {
+                    localStorage.setItem('currentUser', JSON.stringify(res));
+                    this.currentUserSubject.next(res);
                 }
-
-                return user;
+                return res;
             })
         );
+
     }
 
     logout() {
+        this.http.get<any>('/api/logout', { observe: 'response' });
         // remove user from localStorage
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);

@@ -10,14 +10,14 @@ let users = JSON.parse(localStorage['users'] || null) || [
         id: 1,
         username: "user1",
         password: "user1",
-        admin: false,
+        role: "normal",
         token: "fake-token-1",
     },
     {
         id: 2,
         username: "user2",
         password: "user2",
-        admin: true,
+        role: "admin",
         token: "fake-token-2",
     },
 ];
@@ -61,7 +61,7 @@ export class FakeBackendInterceptor implements HttpInterceptor {
                 id: user.id,
                 username: user.username,
                 password: user.password,
-                admin: user.admin,
+                role: user.role,
                 token: user.token
             })
         }

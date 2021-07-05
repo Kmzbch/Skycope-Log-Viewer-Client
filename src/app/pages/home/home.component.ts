@@ -43,12 +43,18 @@ export class HomeComponent implements OnInit {
     // form
     public logViewerForm: FormGroup = this.formBuilder.group({
         serviceOptions: this.serviceOptions,
-        inputFilter: '',
-        inputHighlight: ''
+        inputFilter: [{value:'', disabled: true }],
+        inputHighlight: [{value:'', disabled: true }]
     });
 
     get formControls() {
         return this.logViewerForm.controls;
+    }
+
+    onServiceSelected() {
+        this.getSelectedServiceLog();
+        this.formControls.inputFilter.enable();
+        this.formControls.inputHighlight.enable();
     }
 
     filterLog() {
@@ -106,6 +112,7 @@ export class HomeComponent implements OnInit {
     getSelectedServiceLog() {
         const serviceId = this.formControls.serviceOptions.value;
         const content = this.serviceService.getServiceLog(this.serviceOptions[serviceId - 1].apiUrl);
+
 
         // set text content
         this.logContent = content;

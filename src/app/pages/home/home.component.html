@@ -10,7 +10,7 @@
           <div class="col-md-4 mb-3">
             <select
               formControlName="serviceOptions"
-              (change)="getSelectedServiceLog()"
+              (change)="onServiceSelected()"
               class="form-select form-select-md mb-3"
               aria-label="Default select example"
             >
@@ -23,6 +23,7 @@
             <input
               formControlName="inputFilter"
               (keyup)="filterLog()"
+              [disabled]="true"
               type="text"
               class="form-control"
               id="filter"
@@ -33,6 +34,7 @@
             <input
               formControlName="inputHighlight"
               (keyup)="highlightLog()"
+              [disabled]="true"
               type="text"
               class="form-control"
               id="highlighter"
