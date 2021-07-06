@@ -5,6 +5,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { ServiceModel } from 'src/app/models/ServiceModel';
 import { ServiceService } from 'src/app/shared-services/service.service';
 import { AuthService } from 'src/app/shared-services/auth.service';
+import { first, map, take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-home',
@@ -14,9 +15,20 @@ import { AuthService } from 'src/app/shared-services/auth.service';
     ]
 })
 export class HomeComponent implements OnInit {
+    public logViewerForm: FormGroup = this.formBuilder.group({
+        serviceOptions: [],
+        inputFilter: [
+            { value: '', disabled: true }
+        ],
+        inputHighlight: [
+            { value: '', disabled: true }
+        ]
+    });
     public serviceOptions: ServiceModel[] = [];
     private logContent: string = '';
     private isFiltered: Boolean = false;
+    private isHighlighted: Boolean = false;
+
     private logViewConsole: any;
 
     constructor(
@@ -30,29 +42,19 @@ export class HomeComponent implements OnInit {
     ngOnInit(): void {
         this.serviceOptions = this.serviceService.getServices();
 
-        // const logContentInterval = interval(1000).pipe();
-        // logContentInterval.subscribe(this.updateLogContent.bind(this));
+        const logContentInterval = interval(1500).pipe();
+        logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
 
         this.logViewConsole = document.querySelector('#logviewer-console .console-textarea');
     }
-
-    // form
-    public logViewerForm: FormGroup = this.formBuilder.group({
-        serviceOptions: this.serviceOptions,
-        inputFilter: [
-            { value: '', disabled: true }
-        ],
-        inputHighlight: [
-            { value: '', disabled: true }
-        ]
-    });
 
     get formControls() {
         return this.logViewerForm.controls;
     }
 
+    // event handlers
     onServiceSelected() {
-        this.getSelectedServiceLog();
+        this.updateLogViewerConsole();
         this.formControls.inputFilter.enable();
         this.formControls.inputHighlight.enable();
     }
@@ -84,49 +86,48 @@ export class HomeComponent implements OnInit {
             }, '');
         }
         else {
-            this.getSelectedServiceLog();
+            this.updateLogViewerConsole();
         }
     }
 
     highlightLog() {
         const query = this.formControls.inputHighlight.value.toLowerCase();
+        this.isHighlighted = query;
 
-        // let lines = this.textareaContent.split('\n');
-        let lines = this.logContent.split('\n');
-
-        this.logViewConsole.innerHTML = '';
-        for (let line of lines) {
-            let replaced = line.replace(/\n/gi, '<br>');
-            const querystring = this.formControls.inputHighlight.value.trim().split(' ');
-            const re = new RegExp(`(${querystring.join('|')})`, 'gi');
-            replaced = replaced.replace(re, `<span class="highlight">$1</span>`);
-
-            this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
-        }
-    }
-
-    getSelectedServiceLog() {
-        const serviceId = this.formControls.serviceOptions.value;
-        // const content = this.serviceService.getServiceLog(this.serviceOptions[serviceId - 1].apiUrl);
-
-        this.serviceService.testGetLog().subscribe((res) => {
-            this.logContent = res.raw;
-            let lines = res.raw.split('\n');
+        if (this.isHighlighted) {
+            // let lines = this.textareaContent.split('\n');
+            let lines = this.logContent.split('\n');
 
             this.logViewConsole.innerHTML = '';
             for (let line of lines) {
                 let replaced = line.replace(/\n/gi, '<br>');
+                const querystring = this.formControls.inputHighlight.value.trim().split(' ');
+                const re = new RegExp(`(${querystring.join('|')})`, 'gi');
+                replaced = replaced.replace(re, `<span class="highlight">$1</span>`);
+
                 this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
             }
-        });
+        }
+        else {
+            this.updateLogViewerConsole();
+        }
     }
 
-    // utility
-    updateLogContent() {
-        if (!this.isFiltered && this.formControls.serviceOptions.value) {
-            this.logViewConsole.insertAdjacentHTML('beforeend', '<div>TEST!</div>');
-            this.logContent += 'TEST!\n'; // simulate
-            this.logViewConsole.innerHTML = this.logContent.replace(/\n/gi, '<br>');
+    updateLogViewerConsole() {
+        if (!this.isFiltered && !this.isHighlighted && this.formControls.serviceOptions.value) {
+            const serviceId = this.formControls.serviceOptions.value;
+            // const content = this.serviceService.getServiceLog(this.serviceOptions[serviceId - 1].apiUrl);
+
+            this.serviceService.testGetLog().subscribe((res) => {
+                this.logContent = res.raw;
+                let lines = res.raw.split('\n');
+
+                this.logViewConsole.innerHTML = '';
+                for (let line of lines) {
+                    let replaced = line.replace(/\n/gi, '<br>');
+                    this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
+                }
+            });
         }
     }
 
