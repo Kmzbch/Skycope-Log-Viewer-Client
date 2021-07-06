@@ -14,7 +14,7 @@ import { AuthService } from '../../shared-services/auth.service';
 })
 export class LoginComponent implements OnInit {
     public loginForm: FormGroup = this.formBuilder.group({
-        userName: [
+        username: [
             '',
             Validators.required
         ],
@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
             Validators.required
         ]
     });
-    submitted:Boolean = false;
+    submitted: Boolean = false;
     returnUrl: string = '';
     showErrorMessage: Boolean = false;
 
@@ -40,57 +40,39 @@ export class LoginComponent implements OnInit {
         }
     }
 
+    // life cycle hooks
     ngOnInit() {
-        this.getLoginForm();
-
-        // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
-    getLoginForm() {
-        console.log('getLoginForm() invoked');
-
-        this.loginForm = this.formBuilder.group({
-            username: [
-                '',
-                Validators.required
-            ],
-            password: [
-                '',
-                Validators.required
-            ]
-        });
-    }
-
-    // convenience getter for easy access to form fields
-    get formControls() {
-        return this.loginForm.controls;
-    }
-
-    resetErrorMessage() {
-        this.showErrorMessage = false;
-    }
-
+    // event handlers
     onSubmit() {
-
         if (this.loginForm.invalid) {
             return;
         }
 
         this.showErrorMessage = false;
 
-        this.authService
-            .login(this.formControls.username.value, this.formControls.password.value)
-            .pipe(first())
-            .subscribe(
-                (data) => {
-                    this.router.navigate([
-                        // this.returnUrl
-                        'home'
-                    ]);
-                },
-                (error) => {
-                    this.showErrorMessage = true;
-                }
-            );
+        let username = this.formControls.username.value;
+        let password = this.formControls.password.value;
+
+        this.authService.login(username, password).pipe(first()).subscribe(
+            (data) => {
+                this.router.navigate([
+                    this.returnUrl
+                ]);
+            },
+            (error) => {
+                this.showErrorMessage = true;
+            }
+        );
+    }
+
+    get formControls() {
+        return this.loginForm.controls;
+    }
+
+    resetErrorMessage() {
+        this.showErrorMessage = false;
     }
 }

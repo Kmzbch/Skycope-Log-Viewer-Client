@@ -14,13 +14,13 @@
       </div>
       <div class="col-md-3 mb-3">
         <input
+          formControlName="username"
           type="text"
           class="form-control"
           [ngClass]="{
             'is-invalid': submitted && formControls.username.errors
           }"
           (input)="resetErrorMessage()"
-          formControlName="username"
           placeholder="Username"
         />
         <div
@@ -45,14 +45,13 @@
       </div>
       <div class="col-md-3 mb-3">
         <input
-        
+          formControlName="password"
           type="password"
           class="form-control"
           [ngClass]="{
             'is-invalid': submitted && formControls.password.errors
           }"
           (input)="resetErrorMessage()"
-          formControlName="password"
           placeholder="Password"
         />
         <div

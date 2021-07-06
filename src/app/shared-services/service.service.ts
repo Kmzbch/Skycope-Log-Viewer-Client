@@ -13,15 +13,9 @@ export class ServiceService {
   constructor(public router: Router, private http: HttpClient) { }
 
 
-  testServiceLog(): Observable<any> {
-    let url = "http://127.0.0.1:5000/test/log"
+  testGetLog(): Observable<any> {
 
-    return this.http.get<any>(url);
-    //     // map((raw) => {
-    //     //     console.log(raw);
-    //     //     return raw;
-    //     // })
-    // );
+    return this.http.get<any>('/api/test/log');
 
   }
 

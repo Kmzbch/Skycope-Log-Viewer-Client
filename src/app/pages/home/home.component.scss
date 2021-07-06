@@ -1,6 +1,6 @@
-html{
+html {
     overflow: hidden;
-  }
+}
 
 .container {
     width: 1024px;
@@ -11,8 +11,8 @@ html{
     left: 0;
     right: 0;
     margin: auto;
-  }
+}
 
-  ::ng-deep .highlight {
+::ng-deep .highlight {
     background-color: yellow;
-  }
+}

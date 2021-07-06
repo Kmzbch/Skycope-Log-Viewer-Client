@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { UserModel } from '../models/UserModel';
 
 @Injectable({
@@ -34,12 +34,11 @@ export class AuthService {
                 return res;
             })
         );
-
     }
 
     logout() {
         this.http.get<any>('/api/logout', { observe: 'response' });
-        // remove user from localStorage
+
         localStorage.removeItem('currentUser');
         this.currentUserSubject.next(null);
     }
