@@ -19,6 +19,10 @@ export class ServiceService {
     ) { }
 
 
+  getServiceLogTest(url:string): Observable<any> {
+    return this.http.get<any>(url);
+  }
+
   testGetLog(): Observable<any> {
 
     return this.http.get<any>('/api/test/log');

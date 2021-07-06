@@ -25,7 +25,7 @@ export class HomeComponent implements OnInit {
             { value: '', disabled: true }
         ]
     });
-    public serviceOptions: ServiceModel[] = [];
+    public serviceOptions: any[] = [];
     private logContent: string = '';
     private isFiltered: Boolean = false;
     private isHighlighted: Boolean = false;
@@ -125,8 +125,10 @@ export class HomeComponent implements OnInit {
         if (!this.isFiltered && !this.isHighlighted && this.formControls.serviceOptions.value) {
             const serviceId = this.formControls.serviceOptions.value;
             // const content = this.serviceService.getServiceLog(this.serviceOptions[serviceId - 1].apiUrl);
+            let url = this.serviceOptions[0].api_url;
 
-            this.serviceService.testGetLog().subscribe((res) => {
+            console.log(url);
+            this.serviceService.getServiceLogTest(`${url}?service_id=${serviceId}`).subscribe((res) => {
                 this.logContent = res.raw;
                 let lines = res.raw.split('\n');
 
