@@ -6,6 +6,7 @@ import { ServiceModel } from 'src/app/models/ServiceModel';
 import { ServiceService } from 'src/app/shared-services/service.service';
 import { AuthService } from 'src/app/shared-services/auth.service';
 import { first, map, take } from 'rxjs/operators';
+import { UserModel } from 'src/app/models/UserModel';
 
 @Component({
     selector: 'app-home',
@@ -30,6 +31,7 @@ export class HomeComponent implements OnInit {
     private isHighlighted: Boolean = false;
 
     private logViewConsole: any;
+    private loggedInUser: any;
 
     constructor(
         private router: Router,
@@ -40,10 +42,16 @@ export class HomeComponent implements OnInit {
 
     // life cycle hooks
     ngOnInit(): void {
-        this.serviceOptions = this.serviceService.getServices();
+        this.authService.currentUser
+        .subscribe(res => {
+            this.loggedInUser = res.user;
+            this.serviceService.getServiceOptions(this.loggedInUser.id).subscribe(serviceOptions=>{
+                this.serviceOptions = serviceOptions;
+            });
+        });
 
-        const logContentInterval = interval(1500).pipe();
-        logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
+        // const logContentInterval = interval(1500).pipe();
+        // logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
 
         this.logViewConsole = document.querySelector('#logviewer-console .console-textarea');
     }

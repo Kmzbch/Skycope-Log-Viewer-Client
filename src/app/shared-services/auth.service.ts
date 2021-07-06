@@ -10,7 +10,7 @@ import { UserModel } from '../models/UserModel';
 })
 export class AuthService {
     private currentUserSubject: BehaviorSubject<UserModel | null>;
-    public currentUser: Observable<UserModel | null>;
+    public currentUser: Observable<any>;
 
     constructor(public router: Router, private http: HttpClient) {
         this.currentUserSubject = new BehaviorSubject<UserModel | null>(

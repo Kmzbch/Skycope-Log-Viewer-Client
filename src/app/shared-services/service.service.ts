@@ -2,15 +2,21 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
 import { ServiceModel } from 'src/app/models/ServiceModel';
+import { UserModel } from '../models/UserModel';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ServiceService {
 
-  constructor(public router: Router, private http: HttpClient) { }
+  constructor(
+    public router: Router, 
+    private http: HttpClient,
+    private authService: AuthService
+    ) { }
 
 
   testGetLog(): Observable<any> {
@@ -44,25 +50,14 @@ export class ServiceService {
     }
 
       // get services at random for testing
-      public getServices(): ServiceModel[] {
-        // const randomNum = Math.floor(Math.random() * 2 + 1);
-        let randomNum = 1;
-        let returnValue;
+      public getServiceOptions(userId: number): Observable<ServiceModel[]> {
+        // const currentUser : UserModel | null = this.authService.currentUserValue;
+        return this.http.get<any>(`/api/services?user_id=${userId}`).pipe(
+          map((res) => {
+              return res.result;
+          }))
 
-        if (randomNum === 2) {
-            returnValue = [
-                { id: 3, name: 'Service 3', apiUrl: '3' },
-                { id: 4, name: 'Service 4', apiUrl: '4' }
-            ];
-        }
-        else {
-            returnValue = [
-                { id: 1, name: 'Service 1', apiUrl: '1' },
-                { id: 2, name: 'Service 2', apiUrl: '2' }
-            ];
-        }
 
-        return returnValue;
     }
 
 }
