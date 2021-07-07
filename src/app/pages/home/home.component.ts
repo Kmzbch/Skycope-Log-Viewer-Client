@@ -4,6 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { ServiceService } from 'src/app/shared-services/service.service';
 import { AuthService } from 'src/app/shared-services/auth.service';
 import { ServiceModel } from 'src/app/models/ServiceModel';
+import { interval } from 'rxjs';
 
 @Component({
     selector: 'app-home',
@@ -24,10 +25,11 @@ export class HomeComponent implements OnInit {
     });
     public serviceOptions: any[] = [];
     private logViewConsole: any;
-    private logContent: string = '';
+    private logContent: string[] = [];
     private isFiltered: Boolean = false;
     private isHighlighted: Boolean = false;
     private loggedInUser: any;
+    private jobPool: any = {};
 
     constructor(
         private router: Router,
@@ -45,8 +47,8 @@ export class HomeComponent implements OnInit {
             });
         });
 
-        // const logContentInterval = interval(1500).pipe();
-        // logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
+        const logContentInterval = interval(1500).pipe();
+        logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
 
         this.logViewConsole = document.querySelector('#logviewer-console .console-textarea');
     }
@@ -66,63 +68,72 @@ export class HomeComponent implements OnInit {
         const filterBy = this.formControls.inputFilter.value.toLowerCase();
         this.isFiltered = filterBy;
 
-        if (this.isFiltered) {
-            const lines = this.logContent.split('\n');
+        this.doAfterInputIsDone(() => {
+            if (this.isFiltered) {
+                // const lines = this.logContent.split('\n');
+                const lines = this.logContent;
 
-            Array.from(this.logViewConsole.children).forEach((item: any) => {
-                if (!item.getAttribute('textarea')) {
-                    const querystring = filterBy.trim();
-                    const re = new RegExp(`(${querystring})`, 'ig');
-                    const found = item.textContent.match(re);
+                Array.from(this.logViewConsole.children).forEach((item: any) => {
+                    if (!item.getAttribute('textarea')) {
+                        const querystring = filterBy.trim();
+                        const re = new RegExp(`(${querystring})`, 'ig');
+                        const found = item.textContent.match(re);
 
-                    if (found) {
-                        if (item.classList.contains('hidden')) {
-                            item.classList.remove('hidden');
+                        if (found) {
+                            if (item.classList.contains('hidden')) {
+                                item.classList.remove('hidden');
+                            }
+                        }
+                        else {
+                            if (!item.classList.contains('hidden')) {
+                                item.classList.add('hidden');
+                            }
                         }
                     }
-                    else {
-                        if (!item.classList.contains('hidden')) {
-                            item.classList.add('hidden');
-                        }
-                    }
-                }
-            }, '');
-        }
-        else {
-            this.updateLogViewerConsole();
-        }
+                }, '');
+            }
+            else {
+                this.updateLogViewerConsole();
+            }
+        }, 400);
     }
 
     highlightLog() {
         const query = this.formControls.inputHighlight.value.toLowerCase();
         this.isHighlighted = query;
 
-        if (this.isHighlighted) {
-            let lines = this.logContent.split('\n');
+        this.doAfterInputIsDone(() => {
+            if (this.isHighlighted) {
+                // let lines = this.logContent.split('\n');
+                let lines = this.logContent;
 
-            this.logViewConsole.innerHTML = '';
-            for (let line of lines) {
-                let replaced = line.replace(/\n/gi, '<br>');
-                const querystring = this.formControls.inputHighlight.value.trim().split(' ');
-                const re = new RegExp(`(${querystring.join('|')})`, 'gi');
-                replaced = replaced.replace(re, `<span class="highlight">$1</span>`);
+                this.logViewConsole.innerHTML = '';
+                for (let line of lines) {
+                    let replaced = line.replace(/\n/gi, '<br>');
+                    const querystring = this.formControls.inputHighlight.value.trim().split(' ');
+                    const re = new RegExp(`(${querystring.join('|')})`, 'gi');
+                    replaced = replaced.replace(re, `<span class="highlight">$1</span>`);
 
-                this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
+                    this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
+                }
             }
-        }
-        else {
-            this.updateLogViewerConsole();
-        }
+            else {
+                this.updateLogViewerConsole();
+            }
+        }, 400);
     }
 
     updateLogViewerConsole() {
         if (!this.isFiltered && !this.isHighlighted && this.formControls.serviceOptions.value) {
             const serviceId = this.formControls.serviceOptions.value;
-            const url = this.serviceOptions.find((s:ServiceModel)=>s.id == serviceId).api_url;
+            const url = this.serviceOptions.find((s: ServiceModel) => s.id == serviceId).api_url;
 
             this.serviceService.getServiceLog(`${url}?service_id=${serviceId}`).subscribe((res) => {
-                this.logContent = res.raw;
-                let lines = res.raw.split('\n');
+                // this.logContent = res.raw;
+                // let lines = res.raw.split('\n');
+
+                let lines = res;
+                this.logContent = res;
 
                 this.logViewConsole.innerHTML = '';
                 for (let line of lines) {
@@ -138,5 +149,19 @@ export class HomeComponent implements OnInit {
         this.router.navigate([
             '/login'
         ]);
+    }
+
+    doAfterInputIsDone(job: any, timeout: number) {
+        if (job in this.jobPool) {
+            window.clearTimeout(this.jobPool[job]);
+        }
+        this.jobPool[job] = window.setTimeout(() => {
+            delete this.jobPool[job];
+            try {
+                job.call();
+            } catch (e) {
+                alert('EXCEPTION CAUGHT : ' + job);
+            }
+        }, timeout);
     }
 }

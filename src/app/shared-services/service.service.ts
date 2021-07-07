@@ -12,8 +12,15 @@ import { AuthService } from './auth.service';
 export class ServiceService {
     constructor(public router: Router, private http: HttpClient, private authService: AuthService) {}
 
-    getServiceLog(url: string): Observable<any> {
-        return this.http.get<any>(url);
+    getServiceLog(url: string): Observable<string[]> {
+        return this.http.get<any>(url).pipe(
+          map((res)=>{
+            let lines = res.raw.split('\n');
+            // get only the 300 latest lines of log
+            lines = lines.splice(-300);
+            return lines;
+          })
+        );
     }
 
     public getServiceOptions(userId: number): Observable<ServiceModel[]> {
