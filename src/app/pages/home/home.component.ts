@@ -1,12 +1,9 @@
 import { Component, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { interval, Observable } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { ServiceModel } from 'src/app/models/ServiceModel';
 import { ServiceService } from 'src/app/shared-services/service.service';
 import { AuthService } from 'src/app/shared-services/auth.service';
-import { first, map, take } from 'rxjs/operators';
-import { UserModel } from 'src/app/models/UserModel';
+import { ServiceModel } from 'src/app/models/ServiceModel';
 
 @Component({
     selector: 'app-home',
@@ -26,11 +23,10 @@ export class HomeComponent implements OnInit {
         ]
     });
     public serviceOptions: any[] = [];
+    private logViewConsole: any;
     private logContent: string = '';
     private isFiltered: Boolean = false;
     private isHighlighted: Boolean = false;
-
-    private logViewConsole: any;
     private loggedInUser: any;
 
     constructor(
@@ -42,10 +38,9 @@ export class HomeComponent implements OnInit {
 
     // life cycle hooks
     ngOnInit(): void {
-        this.authService.currentUser
-        .subscribe(res => {
+        this.authService.currentUser.subscribe((res) => {
             this.loggedInUser = res.user;
-            this.serviceService.getServiceOptions(this.loggedInUser.id).subscribe(serviceOptions=>{
+            this.serviceService.getServiceOptions(this.loggedInUser.id).subscribe((serviceOptions) => {
                 this.serviceOptions = serviceOptions;
             });
         });
@@ -103,7 +98,6 @@ export class HomeComponent implements OnInit {
         this.isHighlighted = query;
 
         if (this.isHighlighted) {
-            // let lines = this.textareaContent.split('\n');
             let lines = this.logContent.split('\n');
 
             this.logViewConsole.innerHTML = '';
@@ -124,11 +118,9 @@ export class HomeComponent implements OnInit {
     updateLogViewerConsole() {
         if (!this.isFiltered && !this.isHighlighted && this.formControls.serviceOptions.value) {
             const serviceId = this.formControls.serviceOptions.value;
-            // const content = this.serviceService.getServiceLog(this.serviceOptions[serviceId - 1].apiUrl);
-            let url = this.serviceOptions[0].api_url;
+            const url = this.serviceOptions.find((s:ServiceModel)=>s.id == serviceId).api_url;
 
-            console.log(url);
-            this.serviceService.getServiceLogTest(`${url}?service_id=${serviceId}`).subscribe((res) => {
+            this.serviceService.getServiceLog(`${url}?service_id=${serviceId}`).subscribe((res) => {
                 this.logContent = res.raw;
                 let lines = res.raw.split('\n');
 
