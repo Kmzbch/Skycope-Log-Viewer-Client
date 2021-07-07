@@ -20,13 +20,12 @@ export class AuthService {
     }
 
     public get currentUserValue(): UserModel | null {
-        return this.currentUserSubject.value;
+        return this.currentUserSubject?.value;
     }
 
     login(username: string, password: string) {
         return this.http.post<any>('/api/login', { username, password }).pipe(
             map((res) => {
-                // if (res.user && res.user.token) {
                 if (res.user) {
                     localStorage.setItem('currentUser', JSON.stringify(res));
                     this.currentUserSubject.next(res);

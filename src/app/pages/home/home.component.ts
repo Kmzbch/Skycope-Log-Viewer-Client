@@ -41,10 +41,12 @@ export class HomeComponent implements OnInit {
     // life cycle hooks
     ngOnInit(): void {
         this.authService.currentUser.subscribe((res) => {
-            this.loggedInUser = res.user;
-            this.serviceService.getServiceOptions(this.loggedInUser.id).subscribe((serviceOptions) => {
-                this.serviceOptions = serviceOptions;
-            });
+            this.loggedInUser = res?.user;
+            if(this.loggedInUser) {
+                this.serviceService.getServiceOptions(this.loggedInUser.id).subscribe((serviceOptions) => {
+                    this.serviceOptions = serviceOptions;
+                });    
+            }
         });
 
         const logContentInterval = interval(1500).pipe();
@@ -129,9 +131,6 @@ export class HomeComponent implements OnInit {
             const url = this.serviceOptions.find((s: ServiceModel) => s.id == serviceId).api_url;
 
             this.serviceService.getServiceLog(`${url}?service_id=${serviceId}`).subscribe((res) => {
-                // this.logContent = res.raw;
-                // let lines = res.raw.split('\n');
-
                 let lines = res;
                 this.logContent = res;
 

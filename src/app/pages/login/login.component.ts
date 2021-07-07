@@ -34,6 +34,8 @@ export class LoginComponent implements OnInit {
         public authService: AuthService
     ) {
         if (this.authService.currentUserValue) {
+            console.log("!!!!!!!!!!!!");
+
             this.router.navigate([
                 '/'
             ]);
