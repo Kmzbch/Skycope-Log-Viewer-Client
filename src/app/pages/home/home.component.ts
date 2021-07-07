@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { ServiceService } from 'src/app/shared-services/service.service';
 import { AuthService } from 'src/app/shared-services/auth.service';
 import { ServiceModel } from 'src/app/models/ServiceModel';
-import { interval } from 'rxjs';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-home',
@@ -30,6 +30,7 @@ export class HomeComponent implements OnInit {
     private isHighlighted: Boolean = false;
     private loggedInUser: any;
     private jobPool: any = {};
+    private intervalSubscription: Subscription = new Subscription;
 
     constructor(
         private router: Router,
@@ -42,6 +43,7 @@ export class HomeComponent implements OnInit {
     ngOnInit(): void {
         this.authService.currentUser.subscribe((res) => {
             this.loggedInUser = res?.user;
+            this.serviceOptions =[];
             if(this.loggedInUser) {
                 this.serviceService.getServiceOptions(this.loggedInUser.id).subscribe((serviceOptions) => {
                     this.serviceOptions = serviceOptions;
@@ -50,9 +52,13 @@ export class HomeComponent implements OnInit {
         });
 
         const logContentInterval = interval(1500).pipe();
-        logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
+        this.intervalSubscription = logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
 
         this.logViewConsole = document.querySelector('#logviewer-console .console-textarea');
+    }
+
+    ngOnDestroy()	{
+        this.intervalSubscription.unsubscribe();
     }
 
     get formControls() {
@@ -61,18 +67,30 @@ export class HomeComponent implements OnInit {
 
     // event handlers
     onServiceSelected() {
-        this.updateLogViewerConsole();
+        // reset form
+        this.isFiltered = false;
+        this.isHighlighted = false;
+        this.formControls.inputFilter.setValue("");
+        this.formControls.inputHighlight.setValue("");
         this.formControls.inputFilter.enable();
         this.formControls.inputHighlight.enable();
+
+        this.updateLogViewerConsole();
     }
 
     filterLog() {
         const filterBy = this.formControls.inputFilter.value.toLowerCase();
         this.isFiltered = filterBy;
 
+        if(this.isFiltered) {
+            this.formControls.inputHighlight.disable();
+
+        } else {
+            this.formControls.inputHighlight.enable();
+        }
+
         this.doAfterInputIsDone(() => {
-            if (this.isFiltered) {
-                // const lines = this.logContent.split('\n');
+            if (this.isFiltered && !this.isHighlighted) {
                 const lines = this.logContent;
 
                 Array.from(this.logViewConsole.children).forEach((item: any) => {
@@ -98,14 +116,20 @@ export class HomeComponent implements OnInit {
                 this.updateLogViewerConsole();
             }
         }, 400);
+
     }
 
     highlightLog() {
         const query = this.formControls.inputHighlight.value.toLowerCase();
         this.isHighlighted = query;
 
+        if(this.isHighlighted) {
+            this.formControls.inputFilter.disable();
+        } else {
+            this.formControls.inputFilter.enable();
+        }
         this.doAfterInputIsDone(() => {
-            if (this.isHighlighted) {
+            if (this.isHighlighted && !this.isFiltered) {
                 // let lines = this.logContent.split('\n');
                 let lines = this.logContent;
 
@@ -123,12 +147,13 @@ export class HomeComponent implements OnInit {
                 this.updateLogViewerConsole();
             }
         }, 400);
+
     }
 
     updateLogViewerConsole() {
         if (!this.isFiltered && !this.isHighlighted && this.formControls.serviceOptions.value) {
             const serviceId = this.formControls.serviceOptions.value;
-            const url = this.serviceOptions.find((s: ServiceModel) => s.id == serviceId).api_url;
+            const url = this.serviceOptions.find((s: ServiceModel) => s.id == serviceId)?.api_url;
 
             this.serviceService.getServiceLog(`${url}?service_id=${serviceId}`).subscribe((res) => {
                 let lines = res;
