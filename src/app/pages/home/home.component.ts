@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         const logContentInterval = interval(2000);
         this.intervalSubscription = logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
 
-        // get logviewr console for filtering/highlithing
+        // get logviewer console for filtering/highlithing
         this.logViewConsole = document.querySelector('#logviewer-console .console-textarea');
     }
 
