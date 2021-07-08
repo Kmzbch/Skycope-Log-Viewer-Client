@@ -50,8 +50,17 @@
   </form>
 
   <div class="row justify-content-center">
-    <div class="col-md-9 mb-4">
-      <textarea-expanded id="logviewer-console"></textarea-expanded>
+    <div *ngIf="isLoading" class="loading d-flex justify-content-center">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      </div>
+    </div>    
+    <div class="col-md-9 mb-4"
+    [ngClass]="{
+      'isLoadingConsole': isLoading
+    }"
+    >
+      <textarea-expanded id="logviewer-console"
+      ></textarea-expanded>
     </div>
   </div>
 

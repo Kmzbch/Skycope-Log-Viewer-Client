@@ -26,6 +26,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
     public serviceOptions: any[] = [];
     public serviceLogSubscription: Subscription = new Subscription();
+    public isLoading: Boolean = false;
     private logViewConsole: any;
     private logContent: string[] = [];
     private logFiltered: Boolean = false;
@@ -51,7 +52,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
 
         // set interval for live update
-        const logContentInterval = interval(1500);
+        const logContentInterval = interval(2000);
         this.intervalSubscription = logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
 
         // get logviewr console for filtering/highlithing
@@ -66,6 +67,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     // event handlers
     onServiceSelected() {
         this.logFiltered = this.logHighlighted = false;
+        this.isLoading = true;
 
         // reset form
         this.formControls.inputFilter.setValue('');
@@ -73,7 +75,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.formControls.inputFilter.enable();
         this.formControls.inputHighlight.enable();
 
-        this.updateLogViewerConsole();
     }
 
     onFilter() {
@@ -136,7 +137,6 @@ export class HomeComponent implements OnInit, OnDestroy {
         if (this.logHighlighted && !this.logFiltered) {
             const lines = this.logContent;
 
-            this.logViewConsole.innerHTML = '';
             let updatedHTML = "";
 
             for (let line of lines) {
@@ -147,7 +147,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 updatedHTML += `<div>${replacement}</div>`;
             }
 
-            this.logViewConsole.innerHTML = updatedHTML;
+			this.logViewConsole.insertAdjacentHTML('afterbegin', updatedHTML);
 
         }
         else {
@@ -164,8 +164,6 @@ export class HomeComponent implements OnInit, OnDestroy {
                 .getServiceLog(`${url}?service_id=${serviceId}`)
                 .subscribe((res) => {
                     let lines = this.logContent = res;
-
-                    this.logViewConsole.innerHTML = '';
                     let updatedHTML = "";
 
                     for (let line of lines) {
@@ -173,10 +171,14 @@ export class HomeComponent implements OnInit, OnDestroy {
                         updatedHTML += `<div>${replaced}</div>`;
                     }
 
-                    this.logViewConsole.innerHTML = updatedHTML;
+                    this.logViewConsole.insertAdjacentHTML('afterbegin', updatedHTML);
+
+                    this.isLoading = false;
 
                 });
+
         }
+
     }
 
     logout() {

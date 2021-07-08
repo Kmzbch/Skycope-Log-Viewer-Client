@@ -15,8 +15,8 @@ export class ServiceService {
         return this.http.get<any>(url).pipe(
             map((res) => {
                 let lines = res.content.split('\n');
-                // only the 300 latest lines to be displayed for performance
-                lines = lines.splice(-3000);
+                // only the 5000 latest lines to be displayed for performance
+                lines = lines.splice(-5000);
                 return lines;
             })
         );
