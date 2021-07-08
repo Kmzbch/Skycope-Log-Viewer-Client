@@ -37,14 +37,14 @@ export class LoginComponent implements OnInit, OnDestroy {
     ) {
         if (this.authService.currentUserValue) {
             this.router.navigate([
-                '/'
+                '/home'
             ]);
         }
     }
 
     // life cycle hooks
     ngOnInit() {
-        this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+        // this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
     ngOnDestroy() {
@@ -65,7 +65,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.subscription = this.authService.login(username, password).pipe(first()).subscribe(
             (data) => {
                 this.router.navigate([
-                    this.returnUrl
+                    '/home'
                 ]);
             },
             (error) => {
