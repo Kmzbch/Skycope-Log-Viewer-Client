@@ -9,17 +9,17 @@ import { UserModel } from '../models/UserModel';
     providedIn: 'root'
 })
 export class AuthService {
-    private currentUserSubject: BehaviorSubject<UserModel | null>;
-    public currentUser: Observable<any>;
+    public currentUser: Observable<UserModel>;
+    private currentUserSubject: BehaviorSubject<UserModel>;
 
     constructor(public router: Router, private http: HttpClient) {
-        this.currentUserSubject = new BehaviorSubject<UserModel | null>(
+        this.currentUserSubject = new BehaviorSubject<UserModel>(
             JSON.parse(localStorage['currentUser'] || null) || {}
         );
         this.currentUser = this.currentUserSubject.asObservable();
     }
 
-    public get currentUserValue(): UserModel | null {
+    get currentUserValue(): UserModel {
         return this.currentUserSubject?.value;
     }
 
@@ -27,8 +27,8 @@ export class AuthService {
         return this.http.post<any>('/api/login', { username, password }).pipe(
             map((res) => {
                 if (res.user) {
-                    localStorage.setItem('currentUser', JSON.stringify(res));
-                    this.currentUserSubject.next(res);
+                    localStorage.setItem('currentUser', JSON.stringify(res.user));
+                    this.currentUserSubject.next(res.user);
                 }
                 return res;
             })
@@ -36,9 +36,9 @@ export class AuthService {
     }
 
     logout() {
-        this.http.get<any>('/api/logout', { observe: 'response' });
+        this.http.get<any>('/api/logout');
 
         localStorage.removeItem('currentUser');
-        this.currentUserSubject.next(null);
+        this.currentUserSubject.next(new UserModel);
     }
 }

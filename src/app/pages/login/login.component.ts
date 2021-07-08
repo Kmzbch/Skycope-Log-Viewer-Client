@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { AuthService } from '../../shared-services/auth.service';
@@ -12,7 +13,7 @@ import { AuthService } from '../../shared-services/auth.service';
         './login.component.scss'
     ]
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
     public loginForm: FormGroup = this.formBuilder.group({
         username: [
             '',
@@ -23,9 +24,10 @@ export class LoginComponent implements OnInit {
             Validators.required
         ]
     });
-    submitted: Boolean = false;
-    returnUrl: string = '';
-    showErrorMessage: Boolean = false;
+    public submitted: Boolean = false;
+    public showErrorMessage: Boolean = false;
+    private subscription: Subscription = new Subscription();
+    private returnUrl: string = '';
 
     constructor(
         private formBuilder: FormBuilder,
@@ -45,6 +47,10 @@ export class LoginComponent implements OnInit {
         this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
     }
 
+    ngOnDestroy() {
+        this.subscription.unsubscribe();
+    }
+
     // event handlers
     onSubmit() {
         if (this.loginForm.invalid) {
@@ -56,7 +62,7 @@ export class LoginComponent implements OnInit {
         let username = this.formControls.username.value;
         let password = this.formControls.password.value;
 
-        this.authService.login(username, password).pipe(first()).subscribe(
+        this.subscription = this.authService.login(username, password).pipe(first()).subscribe(
             (data) => {
                 this.router.navigate([
                     this.returnUrl
