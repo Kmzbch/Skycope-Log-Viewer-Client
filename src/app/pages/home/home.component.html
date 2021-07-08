@@ -1,0 +1,82 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <h3 class="col-md-auto mb-5">Skycope Log Viewer</h3>
+  </div>
+
+  <form [formGroup]="logViewerForm">
+    <div class="row justify-content-center">
+      <div class="col-md-9 mb-2">
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <select
+              formControlName="serviceOptions"
+              class="form-select form-select-md mb-3"
+              (change)="onServiceSelected()"
+              aria-label="select a service"
+            >
+              <option
+                *ngFor="let service of serviceOptions"
+                [ngValue]="service.id"
+              >
+                {{ service.name }}
+              </option>
+            </select>
+          </div>
+          <div class="col-md-4 mb-3">
+            <input
+              formControlName="inputFilter"
+              type="text"
+              class="form-control"
+              id="filter"
+              (keyup)="onFilter()"
+              placeholder="Filter by keyword"
+              aria-disabled="true"
+            />
+          </div>
+          <div class="col-md-4 mb-3">
+            <input
+              formControlName="inputHighlight"
+              type="text"
+              class="form-control"
+              id="highlighter"
+              (keyup)="onHighlight()"
+              placeholder="Highlight the keyword"
+              aria-disabled="true"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="row justify-content-center">
+    <div *ngIf="isLoading" class="loading d-flex justify-content-center">
+      <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+      </div>
+    </div>    
+    <div class="col-md-9 mb-4"
+    [ngClass]="{
+      'isLoadingConsole': isLoading
+    }"
+    >
+      <textarea-expanded id="logviewer-console"
+      ></textarea-expanded>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <div class="col-md-9 mb-3">
+      <div class="row justify-content-end">
+        <div class="col-md-auto">
+          <button
+            type="submit"
+            class="btn btn-primary btn-md"
+            (click)="logout()"
+          >
+            Log out
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

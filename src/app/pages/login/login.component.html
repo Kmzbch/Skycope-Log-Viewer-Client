@@ -1,0 +1,87 @@
+<div class="container">
+  <div class="row justify-content-center">
+    <h3 class="col-md-auto mb-5">Login</h3>
+  </div>
+  <form
+    class="col-md-auto form"
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()"
+    novalidate
+  >
+    <div class="row justify-content-center">
+      <div class="col-md-2 mb-3">
+        <label for="username">Username</label>
+      </div>
+      <div class="col-md-3 mb-3">
+        <input
+          formControlName="username"
+          type="text"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': submitted && formControls.username.errors
+          }"
+          (input)="resetErrorMessage()"
+          placeholder="Username"
+        />
+        <div
+          *ngIf="
+            formControls.username.invalid &&
+            (formControls.username.touched || formControls.username.dirty)
+          "
+        >
+          <div
+            class="text-danger"
+            *ngIf="formControls.username.errors?.required"
+          >
+            Please enter username.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-2 mb-3">
+        <label for="username">Password</label>
+      </div>
+      <div class="col-md-3 mb-3">
+        <input
+          formControlName="password"
+          type="password"
+          class="form-control"
+          [ngClass]="{
+            'is-invalid': submitted && formControls.password.errors
+          }"
+          (input)="resetErrorMessage()"
+          placeholder="Password"
+        />
+        <div
+          *ngIf="
+            formControls.password.invalid &&
+            (formControls.password.touched || formControls.password.dirty)
+          "
+        >
+          <div
+            class="text-danger"
+            *ngIf="formControls.password.errors?.required"
+          >
+            Please enter password.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-5 mb-3">
+        <div *ngIf="showErrorMessage" class="text-danger text-center">
+          Invalid username and password Please try again.
+        </div>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col-md-auto mb-3">
+        <button type="submit" class="btn btn-primary btn-md">Log in</button>
+      </div>
+    </div>
+  </form>
+</div>

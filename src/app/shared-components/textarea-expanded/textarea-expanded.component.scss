@@ -1,0 +1,16 @@
+div.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+div {
+  border: 1px solid #CED4DA;
+  height: 380px;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.highlighted-text {
+  background: yellow
+}
