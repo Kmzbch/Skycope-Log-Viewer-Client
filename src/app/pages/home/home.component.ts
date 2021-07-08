@@ -51,7 +51,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         });
 
         // set interval for live update
-        const logContentInterval = interval(1500).pipe();
+        const logContentInterval = interval(1500);
         this.intervalSubscription = logContentInterval.subscribe(this.updateLogViewerConsole.bind(this));
 
         // get logviewr console for filtering/highlithing
