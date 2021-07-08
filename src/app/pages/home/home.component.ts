@@ -28,8 +28,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     public serviceLogSubscription: Subscription = new Subscription();
     private logViewConsole: any;
     private logContent: string[] = [];
-    private isFiltered: Boolean = false;
-    private isHighlighted: Boolean = false;
+    private logFiltered: Boolean = false;
+    private logHighlighted: Boolean = false;
     private currentUser: UserModel = new UserModel();
     private jobPool: any = {};
     private intervalSubscription: Subscription = new Subscription();
@@ -65,7 +65,8 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     // event handlers
     onServiceSelected() {
-        this.isFiltered = this.isHighlighted = false;
+        this.logFiltered = this.logHighlighted = false;
+
         // reset form
         this.formControls.inputFilter.setValue('');
         this.formControls.inputHighlight.setValue('');
@@ -76,24 +77,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     onFilter() {
-        this.isFiltered = this.formControls.inputFilter.value.trim();
+        this.logFiltered = this.formControls.inputFilter.value;
 
         // restrict available form controls on input
-        if (this.isFiltered) {
+        if (this.logFiltered) {
             this.formControls.inputHighlight.disable();
         }
         else {
             this.formControls.inputHighlight.enable();
         }
 
-        this.doAfterInputIsDone(this.filterLog.bind(this), 400);
+        this.doAfterInputIsDone(this.filterLog.bind(this), 300);
     }
 
     onHighlight() {
-        this.isHighlighted = this.formControls.inputHighlight.value.toLowerCase();
+        this.logHighlighted = this.formControls.inputHighlight.value;
 
         // restrict available form controls on input
-        if (this.isHighlighted) {
+        if (this.logHighlighted) {
             this.formControls.inputFilter.disable();
         }
         else {
@@ -104,12 +105,12 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     filterLog() {
-        const filterBy = this.formControls.inputFilter.value.trim();
+        const keyword = this.formControls.inputFilter.value.trim();
 
-        if (this.isFiltered && !this.isHighlighted) {
+        if (this.logFiltered && !this.logHighlighted) {
             Array.from(this.logViewConsole.children).forEach((item: any) => {
                 if (!item.getAttribute('textarea')) {
-                    const re = new RegExp(`(${filterBy})`, 'ig');
+                    const re = new RegExp(`(${keyword})`, 'i');
                     const found = item.textContent.match(re);
                     if (found) {
                         if (item.classList.contains('hidden')) {
@@ -130,19 +131,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     highlightLog () {
-        const keywords = this.formControls.inputHighlight.value.trim().split(' ');
+        const keyword = this.formControls.inputHighlight.value.trim();
 
-        if (this.isHighlighted && !this.isFiltered) {
-            let lines = this.logContent;
+        if (this.logHighlighted && !this.logFiltered) {
+            const lines = this.logContent;
 
             this.logViewConsole.innerHTML = '';
-            for (let line of lines) {
-                let replaced = line.replace(/\n/gi, '<br>');
-                const re = new RegExp(`(${keywords.join('|')})`, 'gi');
-                replaced = replaced.replace(re, `<span class="highlight">$1</span>`);
+            let updatedHTML = "";
 
-                this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
+            for (let line of lines) {
+                const re = new RegExp(`(${keyword})`, 'ig');
+                let replacement = line.replace(/\n/gi, '<br>');
+                replacement = replacement.replace(re, `<span class="highlight">$1</span>`);
+
+                updatedHTML += `<div>${replacement}</div>`;
             }
+
+            this.logViewConsole.innerHTML = updatedHTML;
+
         }
         else {
             this.updateLogViewerConsole();
@@ -150,21 +156,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     updateLogViewerConsole() {
-        if (!this.isFiltered && !this.isHighlighted && this.formControls.serviceOptions.value) {
+        if (!this.logFiltered && !this.logHighlighted && this.formControls.serviceOptions.value) {
             const serviceId = this.formControls.serviceOptions.value;
             const url = this.serviceOptions.find((s: ServiceModel) => s.id == serviceId).api_url;
 
             this.serviceLogSubscription = this.serviceService
                 .getServiceLog(`${url}?service_id=${serviceId}`)
                 .subscribe((res) => {
-                    let lines = res;
-                    this.logContent = res;
+                    let lines = this.logContent = res;
 
                     this.logViewConsole.innerHTML = '';
+                    let updatedHTML = "";
+
                     for (let line of lines) {
                         const replaced = line.replace(/\n/gi, '<br>');
-                        this.logViewConsole.innerHTML += `<div>${replaced}</div>`;
+                        updatedHTML += `<div>${replaced}</div>`;
                     }
+
+                    this.logViewConsole.innerHTML = updatedHTML;
+
                 });
         }
     }
@@ -189,7 +199,7 @@ export class HomeComponent implements OnInit, OnDestroy {
             try {
                 job.call();
             } catch (e) {
-                alert('EXCEPTION CAUGHT : ' + job);
+                console.error('EXCEPTION CAUGHT : ' + job);
             }
         }, timeout);
     }
