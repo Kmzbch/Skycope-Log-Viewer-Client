@@ -147,6 +147,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                 updatedHTML += `<div>${replacement}</div>`;
             }
 
+            this.logViewConsole.innerHTML = "";
 			this.logViewConsole.insertAdjacentHTML('afterbegin', updatedHTML);
 
         }
@@ -171,6 +172,7 @@ export class HomeComponent implements OnInit, OnDestroy {
                         updatedHTML += `<div>${replaced}</div>`;
                     }
 
+                    this.logViewConsole.innerHTML = "";
                     this.logViewConsole.insertAdjacentHTML('afterbegin', updatedHTML);
 
                     this.isLoading = false;
