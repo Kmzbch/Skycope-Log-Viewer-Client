@@ -11,10 +11,8 @@ $ npm start
 ## Covered
 - Python 3
     - Flask
-    - SQLAlchemy
-- JavaScript
+- TypeScript
     - Angular12
-    - Rxjs
 - HTML 5
 - Bootstrap
 - CSS3/SASS/SCSS
