@@ -2,10 +2,12 @@
 
 This is a front-end solution project to the mini-project tech assessment of Skycope Technologies.
 
-# How to run
+## How to run
 
 $ npm install
 $ npm start
+
+Navigate to http://localhost:4200/
 
 ## What are covered
 ## Covered
@@ -22,4 +24,3 @@ $ npm start
 
 - NGINX
 - Deloployment on cloud(e.g. AWS)
-- Multiprocessing for running services in backend process
